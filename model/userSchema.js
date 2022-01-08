@@ -1,4 +1,5 @@
 const mongooose = require("mongoose");
+const jwt = require("jsonwebtoken");
 
 const userSchema = new mongooose.Schema({
   sName: {
@@ -39,6 +40,18 @@ const userSchema = new mongooose.Schema({
   ],
 });
 
+// Middleware for Generating Tokens
+userSchema.methods.generateAuthToken = async function () {
+  try {
+    let token = jwt.sign({ _id: this._id.toString() }, process.env.SECRET_KEY);
+    this.tokens = this.tokens.concat({ token: token });
+    await this.save();
+    return token;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const User = mongooose.model("USER", userSchema);
 
 module.exports = User;
@@ -53,17 +66,5 @@ module.exports = User;
 //   }
 //   next();
 // });
-
-// Middleware for Generating Tokens
-// userSchema.methods.generateAuthToken = async function () {
-//   try {
-//     let token = jwt.sigh({ _id: this._id.toString() }, process.env.SECRET_KEY);
-//     this.tokens = this.tokens.concat({ token: token });
-//     await this.save();
-//     return token;
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
 
 // Create the collection Model

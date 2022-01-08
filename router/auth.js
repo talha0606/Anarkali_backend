@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
+const authenticate = require("../middleware/authenticate");
 
 require("../db/conn");
 const User = require("../model/userSchema");
@@ -15,7 +16,7 @@ router.get("/", (req, res) => {
 const storage = multer.diskStorage({
   destination: (req, file, callback) => {
     // callback(null, "./uploads/");
-    callback(null, "../frontend/public/uploads/");
+    callback(null, "../../Anarkali_frontend/public/uploads/");
   },
   filename: (req, file, callback) => {
     callback(null, file.originalname);
@@ -59,7 +60,7 @@ router.post("/register", upload.single("shopImage"), (req, res) => {
 router.post("/signinin", async (req, res) => {
   console.log("signinsigninsignin");
   try {
-    // let token;
+    let token;
     const { email, password } = req.body;
     console.log("Email: " + email);
     console.log("Password: " + password);
@@ -76,6 +77,13 @@ router.post("/signinin", async (req, res) => {
       if (userLogin.password != password)
         res.status(400).json({ error: "Invalid Credientials " });
       else {
+        token = await userLogin.generateAuthToken();
+        console.log(token);
+
+        res.cookie("jwtoken", token, {
+          expires: new Date(Date.now() + 25892000000),
+          httpOnly: true,
+        });
         console.log(`idd : ${userLogin._id}`);
         console.log(`idd : ${typeof userLogin._id}`);
         res.status(202).json({ id: userLogin._id });
@@ -102,6 +110,13 @@ router.post("/signinin", async (req, res) => {
   } catch (err) {
     console.log(err);
   }
+});
+
+// Logout  ka page
+router.get("/logout", (req, res) => {
+  console.log(`Hello my Logout Page`);
+  res.clearCookie("jwtoken", { path: "/" });
+  res.status(200).send("User lOgout");
 });
 
 // const { sName, address, email, password } = req.body;
@@ -315,7 +330,7 @@ router.get("/myproducts", async (req, res) => {
   }
 });
 
-router.get("/shopinfo", async (req, res) => {
+router.get("/shopinfo", authenticate, async (req, res) => {
   console.log("ShopInfo API");
   const ShopData = await User.find({ _id: req.query.sellerid });
   res.send(ShopData);

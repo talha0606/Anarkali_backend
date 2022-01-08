@@ -1,11 +1,13 @@
 const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
+const cookieParser = require("cookie-parser");
+
 dotenv.config({ path: "./config.env" });
 const port = process.env.PORT;
 
 require("./db/conn");
-
+app.use(cookieParser());
 // const User = require('./model/userSchema');
 
 app.use(express.json());
