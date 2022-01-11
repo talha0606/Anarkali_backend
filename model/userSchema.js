@@ -22,9 +22,12 @@ const userSchema = new mongooose.Schema({
     type: String,
     required: true,
   },
-  shopImage: {
+  // shopImage: {
+  //   type: String,
+  //   required: true,
+  // },
+  imageUrl: {
     type: String,
-    required: true,
   },
   category: {
     type: Number,

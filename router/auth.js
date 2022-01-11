@@ -26,23 +26,50 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 // upload.single("shopImage");
 
-router.post("/register", upload.single("shopImage"), (req, res) => {
-  // for signin
-  const userExist = User.findOne({ email: req.body.email });
-  console.log("userExist: " + userExist);
+router.post("/register", (req, res) => {
+  const { sName, sDescription, address, email, password, url, category } =
+    req.body;
+  // const { shopImage } = req.file.originalname;
 
+  if (!sName || !sDescription || !address || !email || !password || !category) {
+    return res.status(422).send("Please filled the empty field properly");
+  }
+
+  const userExist = User.find({ email: req.body.email });
+  console.log("userExist: " + userExist.sName);
+  // const userExist = null;
   if (userExist) {
     console.log("Email already Exist");
-    return res.status(422).json({ error: "Email already Exist" });
+    return res.status(200).json({ error: "Email already Exist" });
   } else {
+    res.status(200).json({ done: "not Exist" });
+  }
+});
+
+router.post(
+  "/registered",
+  /*upload.single("shopImage"),*/ (req, res) => {
+    // for signin
+    console.log(`Register Shop Please ${req.body.email}`);
+    // const email = req.body.email;
+    // const userExist = User.find({ email: email });
+    // console.log("userExist: " + userExist.sName);
+
+    // const userExist = null;
+
+    // if (false) {
+    //   console.log("Email already Exist");
+    //   return res.status(422).json({ error: "Email already Exist" });
+    // } else {
     const user = new User({
       sName: req.body.sName,
       sDescription: req.body.sDescription,
       address: req.body.address,
       email: req.body.email,
       password: req.body.password,
+      imageUrl: req.body.imageUrl,
       category: req.body.category,
-      shopImage: req.file.originalname,
+      // shopImage: req.file.originalname,
     });
 
     user
@@ -54,7 +81,13 @@ router.post("/register", upload.single("shopImage"), (req, res) => {
       .catch((err) => {
         console.log(err);
       });
+    // }
   }
+);
+
+router.post("/ajabhai", (req, res) => {
+  console.log("aja bhai");
+  console.log(req.body.imageUrl);
 });
 
 router.post("/signinin", async (req, res) => {
@@ -195,45 +228,55 @@ router.get("/logout", (req, res) => {
 // // res.json({ message: req.body });
 // // res.send("mera register page");
 
-router.post("/product", upload.single("prodImage"), (req, res) => {
-  // for signin
-  console.log("Product addition api");
-  const productExist = Product.findOne({ _id: req.body.id });
-
-  if (productExist) {
-    console.log("if......Product addition api");
-    console.log("iddddd: " + req.body.id);
+router.post(
+  "/product",
+  /*upload.single("prodImage"),*/ (req, res) => {
+    // for signin
+    console.log("Product addition api");
+    console.log("id: " + req.body.sellerId);
     console.log("name: " + req.body.pName);
+    console.log("desc: " + req.body.pDescription);
+    console.log("name: " + req.body.prodImage);
 
-    const updated = Product.updateOne(
-      { pName: req.body.pName },
-      {
-        $set: {
-          price: req.body.price,
-        },
-      }
-    );
-    console.log("Upadated value: " + updated);
-  } else {
-    const prod = new Product({
-      sellerId: req.body.sellerId,
-      pName: req.body.pName,
-      pDescription: req.body.pDescription,
-      price: req.body.price,
-      prodImage: req.file.originalname,
-      category: req.body.category,
-      brand: req.body.brand,
-      stock: req.body.stock,
-    });
+    // const productExist = Product.findOne({ _id: req.body.id });
 
-    prod
-      .save()
-      .then(() => res.json("New Product Added"))
-      .catch((err) => {
-        console.log(err);
+    if (false) {
+      //       // console.log("if......Product addition api");
+      //       // console.log("iddddd: " + req.body.id);
+      //       // console.log("name: " + req.body.pName);
+      //       // const updated = Product.updateOne(
+      //       //   { pName: req.body.pName },
+      //       //   {
+      //       //     $set: {
+      //       //       price: req.body.price,
+      //       //     },
+      //       //   }
+      //       // );
+      //       // console.log("Upadated value: " + updated);
+    } else {
+      const prod = new Product({
+        sellerId: req.body.sellerId,
+        pName: req.body.pName,
+        pDescription: req.body.pDescription,
+        price: req.body.price,
+        prodImage: req.body.prodImage,
+        category: req.body.category,
+        brand: req.body.brand,
+        stock: req.body.stock,
       });
+
+      prod
+        .save()
+        .then(() => {
+          console.log("New Product Added");
+          res.json("New Product Added");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   }
-});
+);
 
 // router.post("/login", async (req, res) => {
 //   try {
@@ -270,9 +313,60 @@ router.post("/product", upload.single("prodImage"), (req, res) => {
 //   }
 // });
 
-router.post("/products", async (req, res) => {
+// For Products....................................
+// router.post("/products", async (req, res) => {
+//   console.log(`In Home API`);
+//   console.log("Price: ", req.body.price);
+//   let findArgs = {};
+
+//   for (let key in req.body.filters) {
+//     if (req.body.filters[key].length > 0) {
+//       if (key === "brand") {
+//         findArgs[key] = req.body.filters[key];
+//         console.log(req.body.filters[key]);
+//         console.log(findArgs);
+//       } else {
+//         findArgs[key] = req.body.filters[key];
+//         console.log(req.body.filters[key]);
+//         console.log(findArgs);
+//       }
+//     }
+//   }
+//   const rootUser = await Product.find(findArgs);
+
+// if (req.body.price && !findArgs) {
+//   const rootUser = await Product.find({ price: { $lte: req.body.price } });
+//   if (!rootUser) {
+//     throw new Error("Data not Found");
+//   }
+//   res.send(rootUser);
+// } else if (!req.body.price && findArgs) {
+//   const rootUser = await Product.find(findArgs);
+//   if (!rootUser) {
+//     throw new Error("Data not Found");
+//   }
+//   res.send(rootUser);
+// } else {
+//   const rootUser = await Product.find(findArgs);
+// const finalhops = await rootUser.find({ price: { $lte: req.body.price } });
+// if (!finalhops) {
+//   throw new Error("Data not Found");
+// }
+
+//   res.send(rootUser);
+// }
+
+//   if (!rootUser) {
+//     throw new Error("Data not Found");
+//   }
+
+//   res.send(rootUser);
+// });
+
+// For Shops..................................
+router.post("/home", async (req, res) => {
   console.log(`In Home API`);
-  console.log("Price: ", req.body.price);
+  // console.log("Price: ", req.body.price);
   let findArgs = {};
 
   for (let key in req.body.filters) {
@@ -288,30 +382,8 @@ router.post("/products", async (req, res) => {
       }
     }
   }
-  const rootUser = await Product.find(findArgs);
-
-  // if (req.body.price && !findArgs) {
-  //   const rootUser = await Product.find({ price: { $lte: req.body.price } });
-  //   if (!rootUser) {
-  //     throw new Error("Data not Found");
-  //   }
-  //   res.send(rootUser);
-  // } else if (!req.body.price && findArgs) {
-  //   const rootUser = await Product.find(findArgs);
-  //   if (!rootUser) {
-  //     throw new Error("Data not Found");
-  //   }
-  //   res.send(rootUser);
-  // } else {
-  //   const rootUser = await Product.find(findArgs);
-  // const finalhops = await rootUser.find({ price: { $lte: req.body.price } });
-  // if (!finalhops) {
-  //   throw new Error("Data not Found");
-  // }
-
-  //   res.send(rootUser);
-  // }
-
+  const rootUser = await User.find(findArgs);
+  // console.log(rootUser);
   if (!rootUser) {
     throw new Error("Data not Found");
   }
@@ -323,7 +395,7 @@ router.get("/myproducts", async (req, res) => {
   try {
     console.log("Myproducts API");
     const myproducts = [await Product.find({ sellerId: req.query.id })];
-    console.log("Myproducts" + myproducts);
+    // console.log("Myproducts" + myproducts);
     res.send(myproducts);
   } catch (err) {
     console.log(err.Message);
