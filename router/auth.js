@@ -26,62 +26,72 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 // upload.single("shopImage");
 
-router.post("/register", (req, res) => {
-  const { sName, sDescription, address, email, password, url, category } =
-    req.body;
-  // const { shopImage } = req.file.originalname;
-
-  if (!sName || !sDescription || !address || !email || !password || !category) {
-    return res.status(422).send("Please filled the empty field properly");
-  }
-
-  const userExist = User.find({ email: req.body.email });
-  console.log("userExist: " + userExist.sName);
-  // const userExist = null;
-  if (userExist) {
-    console.log("Email already Exist");
-    return res.status(200).json({ error: "Email already Exist" });
-  } else {
-    res.status(200).json({ done: "not Exist" });
-  }
+router.post("/registered", async (req, res) => {
+  const updated = await User.updateOne(
+    { _id: req.body.id },
+    { $set: { imageUrl: req.body.shopImage } }
+  );
+  // const userExist = await User.findOne({ email: req.body.id });
+  // console.log("userExist: " + userExist);
+  // // const userExist = null;
+  // if (userExist) {
+  //   console.log("Email already Exist");
+  //   return res.status(422).json({ error: "Email already Exist" });
+  // } else {
+  //   res.status(200).json({ done: "not Exist" });
+  // }
 });
 
 router.post(
-  "/registered",
-  /*upload.single("shopImage"),*/ (req, res) => {
+  "/register",
+  /*upload.single("shopImage"),*/ async (req, res) => {
     // for signin
+    const { sName, sDescription, address, email, password, url, category } =
+      req.body;
+    // const { shopImage } = req.file.originalname;
+
+    if (
+      !sName ||
+      !sDescription ||
+      !address ||
+      !email ||
+      !password ||
+      !category
+    ) {
+      return res.status(402).send("Please filled the empty field properly");
+    }
+
     console.log(`Register Shop Please ${req.body.email}`);
-    // const email = req.body.email;
-    // const userExist = User.find({ email: email });
+    const userExist = await User.findOne({ email: email });
     // console.log("userExist: " + userExist.sName);
 
     // const userExist = null;
 
-    // if (false) {
-    //   console.log("Email already Exist");
-    //   return res.status(422).json({ error: "Email already Exist" });
-    // } else {
-    const user = new User({
-      sName: req.body.sName,
-      sDescription: req.body.sDescription,
-      address: req.body.address,
-      email: req.body.email,
-      password: req.body.password,
-      imageUrl: req.body.imageUrl,
-      category: req.body.category,
-      // shopImage: req.file.originalname,
-    });
-
-    user
-      .save()
-      .then((resu) => {
-        console.log(resu._id);
-        res.status(200).json({ id: resu._id });
-      })
-      .catch((err) => {
-        console.log(err);
+    if (userExist) {
+      console.log("Email already Exist");
+      return res.status(422).json({ error: "Email already Exist" });
+    } else {
+      const user = new User({
+        sName: req.body.sName,
+        sDescription: req.body.sDescription,
+        address: req.body.address,
+        email: req.body.email,
+        password: req.body.password,
+        imageUrl: req.body.imageUrl,
+        category: req.body.category,
+        // shopImage: req.file.originalname,
       });
-    // }
+
+      user
+        .save()
+        .then((resu) => {
+          console.log(resu._id);
+          res.status(200).json({ id: resu._id });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   }
 );
 
@@ -228,9 +238,18 @@ router.get("/logout", (req, res) => {
 // // res.json({ message: req.body });
 // // res.send("mera register page");
 
+router.post("/productadded", async (req, res) => {
+  const updated = await Product.updateOne(
+    { _id: req.body.id },
+    { $set: { prodImage: req.body.prodImage } }
+  );
+
+  if (updated) res.status(200).json({ done: "upadated ho gai yrr" });
+});
+
 router.post(
   "/product",
-  /*upload.single("prodImage"),*/ (req, res) => {
+  /*upload.single("prodImage"),*/ async (req, res) => {
     // for signin
     console.log("Product addition api");
     console.log("id: " + req.body.sellerId);
@@ -238,7 +257,21 @@ router.post(
     console.log("desc: " + req.body.pDescription);
     console.log("name: " + req.body.prodImage);
 
-    // const productExist = Product.findOne({ _id: req.body.id });
+    const {
+      sellerId,
+      pName,
+      pDescription,
+      price,
+      prodImage,
+      category,
+      brand,
+      stock,
+    } = req.body;
+    if (!pName || !pDescription || !price || !category || !brand || !stock) {
+      return res.status(402).send("Please filled the empty field properly");
+    }
+
+    // const productExist = await Product.findOne({ _id: req.body.id });
 
     if (false) {
       //       // console.log("if......Product addition api");
@@ -267,9 +300,9 @@ router.post(
 
       prod
         .save()
-        .then(() => {
+        .then((resu) => {
           console.log("New Product Added");
-          res.json("New Product Added");
+          res.status(200).json({ id: resu._id });
         })
         .catch((err) => {
           console.log(err);
@@ -393,10 +426,23 @@ router.post("/home", async (req, res) => {
 
 router.get("/myproducts", async (req, res) => {
   try {
+    console.log("Seller Id: " + req.query.id);
     console.log("Myproducts API");
-    const myproducts = [await Product.find({ sellerId: req.query.id })];
-    // console.log("Myproducts" + myproducts);
-    res.send(myproducts);
+    // const myproducts = await Product.find({ sellerId: req.query.id });
+    const myproducts = await Product.find(
+      { sellerId: req.query.id },
+      function (err, myproducts) {
+        if (err) {
+          console.log(err);
+          res.status(500).send(err);
+        } else {
+          console.log("Myproducts: " + myproducts);
+          res.status(200).send(myproducts);
+        }
+      }
+    );
+    // console.log("Myproducts:" + myproducts);
+    // res.send(myproducts);
   } catch (err) {
     console.log(err.Message);
   }

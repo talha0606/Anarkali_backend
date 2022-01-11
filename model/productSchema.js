@@ -19,7 +19,6 @@ const productSchema = new mongooose.Schema({
   },
   prodImage: {
     type: String,
-    required: true,
   },
   category: {
     type: Number,
