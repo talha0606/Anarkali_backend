@@ -454,27 +454,27 @@ router.get("/shopinfo", authenticate, async (req, res) => {
   res.send(ShopData);
 });
 
-router.get("/shop_by_id", async (req, res) => {
+router.get("/prod_by_id", async (req, res) => {
   console.log("In Shop Detail API");
 
   let type = req.query.type;
-  let shopId = req.query.id;
+  let prodId = req.query.id;
 
   console.log(req.query.type);
-  console.log(shopId);
+  console.log(prodId);
 
   // if (type === "array") {
   // }
 
-  const shop = await Product.find({ _id: shopId });
-  if (!shop) {
+  const prod = await Product.findOne({ _id: prodId });
+  if (!prod) {
     throw new Error("Shop not found");
   } else {
-    console.log("Shop found");
+    console.log("Product found");
   }
-  console.log(shop);
+  console.log(prod);
 
-  res.send(shop);
+  res.send(prod);
 });
 
 router.get("/deleteproduct", async (req, res) => {
