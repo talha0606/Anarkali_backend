@@ -510,7 +510,13 @@ router.get("/myproducts", async (req, res) => {
   }
 });
 
-router.get("/shopinfo", authenticate, async (req, res) => {
+router.get("/shopinfo", async (req, res) => {
+  console.log("ShopInfo API");
+  const ShopData = await User.find({ _id: req.query.sellerid });
+  res.send(ShopData);
+});
+
+router.get("/sellerinfo", authenticate, async (req, res) => {
   console.log("ShopInfo API");
   const ShopData = await User.find({ _id: req.query.sellerid });
   res.send(ShopData);
