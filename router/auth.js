@@ -522,7 +522,7 @@ router.get("/sellerinfo", authenticate, async (req, res) => {
   res.send(ShopData);
 });
 
-router.get("/prodinfo", authenticate, async (req, res) => {
+router.get("/prodinfo", async (req, res) => {
   console.log("ProductInfo API");
   const prodData = await Product.find({ _id: req.query.id });
   res.send(prodData);
