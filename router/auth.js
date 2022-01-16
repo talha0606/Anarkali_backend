@@ -1,29 +1,31 @@
 const jwt = require("jsonwebtoken");
 const express = require("express");
 const router = express.Router();
-const multer = require("multer");
+// const multer = require("multer");
 const authenticate = require("../middleware/authenticate");
-
-require("../db/conn");
+const cloudinary = require("../utils/cloudinary");
+const upload = require("../utils/multer");
 const User = require("../model/userSchema");
 const File = require("../model/fileSchema");
 const Product = require("../model/productSchema");
+
+require("../db/conn");
 
 router.get("/", (req, res) => {
   res.send(`Hello world from the server rotuer js`);
 });
 
-const storage = multer.diskStorage({
-  destination: (req, file, callback) => {
-    // callback(null, "./uploads/");
-    callback(null, "../../Anarkali_frontend/public/uploads/");
-  },
-  filename: (req, file, callback) => {
-    callback(null, file.originalname);
-  },
-});
+// const storage = multer.diskStorage({
+//   destination: (req, file, callback) => {
+//     // callback(null, "./uploads/");
+//     callback(null, "../../Anarkali_frontend/public/uploads/");
+//   },
+//   filename: (req, file, callback) => {
+//     callback(null, file.originalname);
+//   },
+// });
 
-const upload = multer({ storage: storage });
+// const upload = multer({ storage: storage });
 // upload.single("shopImage");
 
 router.post("/registered", async (req, res) => {
@@ -40,6 +42,18 @@ router.post("/registered", async (req, res) => {
   // } else {
   //   res.status(200).json({ done: "not Exist" });
   // }
+});
+
+router.post("/productadded", async (req, res) => {
+  console.log("Product Added Again");
+  const updated = await Product.updateOne(
+    { _id: req.body.id },
+    { $set: { prodImage: req.body.prodImage } }
+  );
+  if (updated) {
+    console.log("Updated Product Added Again");
+    res.status(200).json({ added: "Image Added Successfully" });
+  }
 });
 
 router.post(
@@ -238,13 +252,61 @@ router.get("/logout", (req, res) => {
 // // res.json({ message: req.body });
 // // res.send("mera register page");
 
-router.post("/productadded", async (req, res) => {
-  const updated = await Product.updateOne(
-    { _id: req.body.id },
-    { $set: { prodImage: req.body.prodImage } }
-  );
+router.post("/updateProduct", upload.single("image"), async (req, res) => {
+  console.log("updateProduct ApI: " + req.body.id);
+  console.log("Path: " + req.file);
+  const {
+    sellerId,
+    id,
+    pName,
+    pDescription,
+    price,
+    prodImage,
+    category,
+    brand,
+    stock,
+  } = req.body;
+  // console.log("ABC: " + abc);
 
-  if (updated) res.status(200).json({ done: "upadated ho gai yrr" });
+  if (req.file === undefined) {
+    const updated = await Product.updateOne(
+      { _id: id },
+      {
+        $set: {
+          sellerId,
+          pName,
+          pDescription,
+          price,
+          prodImage,
+          category,
+          brand,
+          stock,
+        },
+      }
+    );
+    console.log("In If clause: After upadated api");
+    if (updated) res.status(200).json({ done: "upadated ho gai yrr" });
+  } else {
+    // console.log("AnbhbBC: " + abc);
+    const result = await cloudinary.uploader.upload(req.file.path);
+    const updated = await Product.updateOne(
+      { _id: req.body.id },
+      {
+        $set: {
+          sellerId,
+          pName,
+          pDescription,
+          price,
+          prodImage: result.secure_url,
+          category,
+          brand,
+          stock,
+        },
+      }
+    );
+    console.log("In Else Clause: After upadated api");
+    if (updated) res.status(200).json({ done: "upadated ho gai yrr" });
+  }
 });
 
 router.post(
@@ -454,6 +516,12 @@ router.get("/shopinfo", authenticate, async (req, res) => {
   res.send(ShopData);
 });
 
+router.get("/prodinfo", authenticate, async (req, res) => {
+  console.log("ProductInfo API");
+  const prodData = await Product.find({ _id: req.query.id });
+  res.send(prodData);
+});
+
 router.get("/prod_by_id", async (req, res) => {
   console.log("In Shop Detail API");
 
@@ -479,10 +547,12 @@ router.get("/prod_by_id", async (req, res) => {
 
 router.get("/deleteproduct", async (req, res) => {
   try {
-    console.log("Delete Product API...");
+    console.log("Delete Product API..." + req.query.id);
     const deleted = await Product.deleteOne({ _id: req.query.id });
+    console.log("Delete Product API..." + deleted);
+
     if (deleted) {
-      res.send("Product Deleted Successfully");
+      res.status(200).send("Product Deleted Successfully");
     }
   } catch (err) {
     console.log("DeleteProductError: " + err.Message);
@@ -491,7 +561,7 @@ router.get("/deleteproduct", async (req, res) => {
 //.........................................................................................
 // const storage = multer.diskStorage({
 //   destination: (req, file, callback) => {
-//     callback(null, "./uploads/");
+//     callback(null, "../Anarkali_backend/uploads/");
 //   },
 //   filename: (req, file, callback) => {
 //     callback(null, file.originalname);
@@ -500,17 +570,23 @@ router.get("/deleteproduct", async (req, res) => {
 
 // const upload = multer({ storage: storage });
 
-router.post("/postImage", upload.single("shopImage"), (req, res) => {
-  const newFile = new File({
-    shopImage: req.file.originalname,
-  });
+// router.post("/postImage", upload.single("shopImage"), (req, res) => {
+//   console.log("New File API");
+//   const newFile = new File({
+//     shopImage: req.file.originalname,
+//   });
 
-  newFile
-    .save()
-    .then(() => res.json("New File Posted"))
-    .catch((err) => {
-      console.log(err);
-    });
-});
+//   newFile
+//     .save()
+//     .then((resu) => {
+//       console.log("New File Posted" + resu.shopImage);
+//       res.sendFile(
+//         `C:/Users/Muhammad Talha/Anarkali_backend/uploads/${resu.shopImage}`
+//       );
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     });
+// });
 
 module.exports = router;
