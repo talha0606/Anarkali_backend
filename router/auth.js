@@ -564,6 +564,56 @@ router.get("/deleteproduct", async (req, res) => {
     console.log("DeleteProductError: " + err.Message);
   }
 });
+
+router.get("/searchShop", async (req, res) => {
+  console.log("Search Shop API..." + req.query.name);
+  const searchString = req.query.name;
+  // const cities = await City.find({
+  //   city: { $regex: req.query.val, $options: "i" },
+  // }).limit(5);
+
+  // db.inventory.find({ $or: [{ quantity: { $lt: 20 } }, { price: 10 }] });
+
+  try {
+    const Shops = await User.find({
+      $or: [
+        { sName: { $regex: req.query.name, $options: "i" } },
+        { sDescription: { $regex: req.query.name, $options: "i" } },
+      ],
+    }).limit(5);
+
+    console.log(Shops);
+    res.status(200).send(Shops);
+  } catch (err) {
+    console.log("Error: " + err);
+  }
+});
+
+router.get("/searchProduct", async (req, res) => {
+  console.log("Search Product API..." + req.query.name);
+  const searchString = req.query.name;
+  // const cities = await City.find({
+  //   city: { $regex: req.query.val, $options: "i" },
+  // }).limit(5);
+
+  // db.inventory.find({ $or: [{ quantity: { $lt: 20 } }, { price: 10 }] });
+
+  try {
+    const Products = await Product.find({
+      $or: [
+        { pName: { $regex: req.query.name, $options: "i" } },
+        { pDescription: { $regex: req.query.name, $options: "i" } },
+        { brand: { $regex: req.query.name, $options: "i" } },
+      ],
+    }).limit(5);
+
+    console.log(Products);
+    res.status(200).send(Products);
+  } catch (err) {
+    console.log("Error: " + err);
+  }
+});
+
 //.........................................................................................
 // const storage = multer.diskStorage({
 //   destination: (req, file, callback) => {
