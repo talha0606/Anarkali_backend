@@ -568,36 +568,41 @@ router.get("/deleteproduct", async (req, res) => {
 router.get("/searchShop", async (req, res) => {
   console.log("Search Shop API..." + req.query.name);
   const searchString = req.query.name;
+  console.log("Search String length: " + searchString.length);
+
   // const cities = await City.find({
   //   city: { $regex: req.query.val, $options: "i" },
   // }).limit(5);
 
   // db.inventory.find({ $or: [{ quantity: { $lt: 20 } }, { price: 10 }] });
+  if (searchString.replace(/\s/g, "").length) {
+    try {
+      const Shops = await User.find({
+        $or: [
+          { sName: { $regex: searchString, $options: "i" } },
+          { sDescription: { $regex: searchString, $options: "i" } },
+        ],
+      }).limit(5);
 
-  try {
-    const Shops = await User.find({
-      $or: [
-        { sName: { $regex: req.query.name, $options: "i" } },
-        { sDescription: { $regex: req.query.name, $options: "i" } },
-      ],
-    }).limit(5);
-
-    console.log(Shops);
-    res.status(200).send(Shops);
-  } catch (err) {
-    console.log("Error: " + err);
+      console.log(Shops);
+      res.status(200).send(Shops);
+    } catch (err) {
+      console.log("Error: " + err);
+    }
+  } else {
+    console.log("Else oye");
+    res.send("");
   }
 });
 
 router.get("/searchProduct", async (req, res) => {
-  console.log("Search Product API..." + req.query.name);
   const searchString = req.query.name;
+
   // const cities = await City.find({
   //   city: { $regex: req.query.val, $options: "i" },
   // }).limit(5);
 
   // db.inventory.find({ $or: [{ quantity: { $lt: 20 } }, { price: 10 }] });
-
   try {
     const Products = await Product.find({
       $or: [
