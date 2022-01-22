@@ -8,8 +8,34 @@ const upload = require("../utils/multer");
 const User = require("../model/userSchema");
 const File = require("../model/fileSchema");
 const Product = require("../model/productSchema");
+const Location = require("../model/locationSchema");
 
 require("../db/conn");
+
+router.post("/storelocation", (req, res) => {
+  const { shopId, longitude, latitude } = req.body;
+  const location = new Location({ shopId, longitude, latitude });
+
+  location
+    .save()
+    .then((resu) => {
+      res.status(200).json({ id: "location registered Successfully" });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+router.get("/getlocation", async (req, res) => {
+  try {
+    const locationed = await Location.find({ shopId: req.query.shopId });
+    if (locationed) {
+      res.status(200).send(locationed);
+    }
+  } catch (err) {
+    console.log("Location Error: " + err);
+  }
+});
 
 router.get("/", (req, res) => {
   res.send(`Hello world from the server rotuer js`);
