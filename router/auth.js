@@ -27,6 +27,7 @@ router.post("/storelocation", (req, res) => {
 });
 
 router.get("/getlocation", async (req, res) => {
+  console.log("Get Location");
   try {
     const locationed = await Location.find({ shopId: req.query.shopId });
     if (locationed) {
