@@ -31,7 +31,7 @@ const userSchema = new mongooose.Schema({
   },
   category: {
     type: String,
-    // default: "Bags",
+    default: "Bags",
   },
   tokens: [
     {
