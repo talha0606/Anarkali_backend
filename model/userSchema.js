@@ -30,8 +30,8 @@ const userSchema = new mongooose.Schema({
     type: String,
   },
   category: {
-    type: Number,
-    default: 1,
+    type: String,
+    default: "Bags",
   },
   tokens: [
     {
