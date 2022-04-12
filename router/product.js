@@ -6,6 +6,7 @@ const Product = require("../model/productSchema");
 // import Cloudinary and Multer files to store images in Cloudinary
 const cloudinary = require("../utils/cloudinary");
 const upload = require("../utils/multer");
+const ApiFeatures = require("../utils/apifeatures");
 
 router.post(
   "/product",
@@ -233,19 +234,16 @@ router.get("/myproducts", async (req, res) => {
 
 router.get("/allproducts", async (req, res) => {
   try {
-    console.log("QueryString ");
-    const queryCopy = { ...req.query };
-    let queryStr = json.stringify(queryCopy);
-    queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (key) => `$${key}`);
+    const apiFeature = new ApiFeatures(Product.find(), req.query).filter();
 
-    myproducts = await Product.find(JSON.parse(queryStr));
+    let myproducts = await apiFeature.query;
 
     // const myproducts = await Product.find({});
     console.log("Myproducts:" + myproducts);
     res.status(200).send(myproducts);
   } catch (err) {
     console.log("error oye");
-    console.log(err.Message);
+    console.log(err);
   }
 });
 
