@@ -230,6 +230,25 @@ router.get("/myproducts", async (req, res) => {
     console.log(err.Message);
   }
 });
+
+router.get("/allproducts", async (req, res) => {
+  try {
+    console.log("QueryString ");
+    const queryCopy = { ...req.query };
+    let queryStr = json.stringify(queryCopy);
+    queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (key) => `$${key}`);
+
+    myproducts = await Product.find(JSON.parse(queryStr));
+
+    // const myproducts = await Product.find({});
+    console.log("Myproducts:" + myproducts);
+    res.status(200).send(myproducts);
+  } catch (err) {
+    console.log("error oye");
+    console.log(err.Message);
+  }
+});
+
 // ---------------------------On the way---------------------
 // router.get("/myProducts", async (req, res) => {
 //   try {
