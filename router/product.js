@@ -234,13 +234,30 @@ router.get("/myproducts", async (req, res) => {
 
 router.get("/allproducts", async (req, res) => {
   try {
-    const apiFeature = new ApiFeatures(Product.find(), req.query).filter();
+    const resultPerPage = 12;
+    const productsCount = await Product.countDocuments();
+
+    const apiFeature = new ApiFeatures(Product.find(), req.query)
+      .search()
+      .filter();
 
     let myproducts = await apiFeature.query;
 
+    let filteredProductsCount = myproducts.length;
+
+    apiFeature.pagination(resultPerPage);
+
+    myproducts = await apiFeature.query;
+
     // const myproducts = await Product.find({});
     console.log("Myproducts:" + myproducts);
-    res.status(200).send(myproducts);
+    res.status(200).json({
+      success: true,
+      myproducts,
+      productsCount,
+      resultPerPage,
+      filteredProductsCount,
+    });
   } catch (err) {
     console.log("error oye");
     console.log(err);
