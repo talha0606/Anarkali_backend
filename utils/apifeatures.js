@@ -5,6 +5,7 @@ class ApiFeatures {
   }
 
   search() {
+    console.log("keyword"+this.queryStr.keyword);
     const keyword = this.queryStr.keyword
       ? {
           pName: {

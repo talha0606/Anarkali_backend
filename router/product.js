@@ -259,6 +259,7 @@ router.get("/allproducts", async (req, res) => {
       filteredProductsCount,
     });
   } catch (err) {
+    res.status(402).json({"Error" : err});
     console.log("error oye");
     console.log(err);
   }
