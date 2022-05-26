@@ -6,65 +6,75 @@ const cloudinary = require("../utils/cloudinary");
 const upload = require("../utils/multer");
 const ApiFeatures = require("../utils/apifeatures");
 
-exports.singleproduct = (req, res) => {
-  console.log("Product addition api");
-  console.log("id: " + req.body.sellerId);
-  console.log("name: " + req.body.pName);
-  console.log("desc: " + req.body.pDescription);
-  console.log("name: " + req.body.prodImage);
+exports.singleproduct =
+  (upload.single("image"),
+  async (req, res) => {
+    try {
+      console.log("\nProduct addition api");
+      console.log("id: " + req.body.sellerId);
+      console.log("name: " + req.body.pName);
+      console.log("desc: " + req.body.pDescription);
+      console.log("file: " + req.file);
 
-  const {
-    sellerId,
-    pName,
-    pDescription,
-    price,
-    prodImage,
-    category,
-    brand,
-    stock,
-  } = req.body;
-  if (!pName || !pDescription || !price || !category || !brand || !stock) {
-    return res.status(402).send("Please filled the empty field properly");
-  }
+      const {
+        sellerId,
+        pName,
+        pDescription,
+        price,
+        prodImage,
+        category,
+        brand,
+        stock,
+      } = req.body;
 
-  // const productExist = await Product.findOne({ _id: req.body.id });
+      // const result = await cloudinary.uploader.upload(req.file.path);
+      // console.log("Result : " + result);
 
-  if (false) {
-    //       // console.log("if......Product addition api");
-    //       // console.log("iddddd: " + req.body.id);
-    //       // console.log("name: " + req.body.pName);
-    //       // const updated = Product.updateOne(
-    //       //   { pName: req.body.pName },
-    //       //   {
-    //       //     $set: {
-    //       //       price: req.body.price,
-    //       //     },
-    //       //   }
-    //       // );
-    //       // console.log("Upadated value: " + updated);
-  } else {
-    const prod = new Product({
-      sellerId: req.body.sellerId,
-      pName: req.body.pName,
-      pDescription: req.body.pDescription,
-      price: req.body.price,
-      prodImage: req.body.prodImage,
-      category: req.body.category,
-      brand: req.body.brand,
-      stock: req.body.stock,
-    });
+      if (!pName || !pDescription || !price || !category || !brand || !stock) {
+        return res.status(402).send("Please filled the empty field properly");
+      }
 
-    prod
-      .save()
-      .then((resu) => {
-        console.log("New Product Added");
-        res.status(200).json({ id: resu._id });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-};
+      // const productExist = await Product.findOne({ _id: req.body.id });
+
+      if (false) {
+        //       // console.log("if......Product addition api");
+        //       // console.log("iddddd: " + req.body.id);
+        //       // console.log("name: " + req.body.pName);
+        //       // const updated = Product.updateOne(
+        //       //   { pName: req.body.pName },
+        //       //   {
+        //       //     $set: {
+        //       //       price: req.body.price,
+        //       //     },
+        //       //   }
+        //       // );
+        //       // console.log("Upadated value: " + updated);
+      } else {
+        const prod = await new Product({
+          sellerId: req.body.sellerId,
+          pName: req.body.pName,
+          pDescription: req.body.pDescription,
+          price: req.body.price,
+          // prodImage: req.body.prodImage,
+          category: req.body.category,
+          brand: req.body.brand,
+          stock: req.body.stock,
+        });
+
+        prod
+          .save()
+          .then((resu) => {
+            console.log("New Product Added");
+            res.status(200).json({ id: resu._id });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    } catch (error) {
+      console.log(`Error : ${error}`);
+    }
+  });
 
 exports.productadded = async (req, res) => {
   console.log("Product Added Again");

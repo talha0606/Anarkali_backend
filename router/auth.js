@@ -118,7 +118,7 @@ router.post("/signinin", async (req, res) => {
 
     const userLogin = await User.findOne({ email: email });
 
-    console.log("UserLogin: " + userLogin);
+    // console.log("UserLogin: " + userLogin);
 
     if (userLogin) {
       if (userLogin.password != password)

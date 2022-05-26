@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+let bodyParser = require("body-parser");
 
 const dotenv = require("dotenv");
 
@@ -12,6 +13,7 @@ const port = process.env.PORT;
 require("./db/conn");
 require("./db/localconn");
 
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 // const User = require('./model/userSchema');
 app.use(express.json());
