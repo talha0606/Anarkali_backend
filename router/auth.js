@@ -180,7 +180,8 @@ router.post("/home", async (req, res) => {
 
 router.get("/shopinfo", async (req, res) => {
   console.log("ShopInfo API");
-  const ShopData = await User.find({ _id: req.query.sellerid });
+  const ShopData = await Shop.find({ _id: req.query.sellerid });
+  console.log(`Shop Data: ${ShopData}`);
   res.send(ShopData);
 });
 

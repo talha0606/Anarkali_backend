@@ -1,8 +1,9 @@
 const express = require("express");
 const app = express();
 let bodyParser = require("body-parser");
-
+const fileUpload = require("express-fileupload");
 const dotenv = require("dotenv");
+const cloudinary = require("cloudinary");
 
 const cookieParser = require("cookie-parser");
 
@@ -13,10 +14,17 @@ const port = process.env.PORT;
 require("./db/conn");
 require("./db/localconn");
 
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 // const User = require('./model/userSchema');
 app.use(express.json());
+app.use(fileUpload());
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 // Import Router
 const authroute = require("./router/auth.js");

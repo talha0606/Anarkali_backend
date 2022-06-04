@@ -4,19 +4,27 @@ const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const ErrorHandler = require("../utils/errorhandler");
 
 // import Cloudinary and Multer files to store images in Cloudinary
-const cloudinary = require("../utils/cloudinary");
+// const cloudinary = require("../utils/cloudinary");
+const cloudinary = require("cloudinary");
+
 const upload = require("../utils/multer");
 const ApiFeatures = require("../utils/apifeatures");
 
 exports.singleproduct =
-  (upload.single("image"),
+  // (upload.single("prodImage"),
   async (req, res) => {
     try {
       console.log("\nProduct addition api");
+      // const myCloud = await cloudinary.uploader.upload(req.body.prodImage, {
+      //   folder: "products",
+      //   width: 150,
+      //   crop: "scale",
+      // });
+
       console.log("id: " + req.body.sellerId);
       console.log("name: " + req.body.pName);
       console.log("desc: " + req.body.pDescription);
-      console.log("file: " + req.file);
+      // console.log("file: " + req.file);
 
       const {
         sellerId,
@@ -28,6 +36,9 @@ exports.singleproduct =
         brand,
         stock,
       } = req.body;
+      console.log(
+        `${pName}, ${pDescription}, ${price}, ${category}, ${prodImage}`
+      );
 
       // const result = await cloudinary.uploader.upload(req.file.path);
       // console.log("Result : " + result);
@@ -53,14 +64,14 @@ exports.singleproduct =
         //       // console.log("Upadated value: " + updated);
       } else {
         const prod = await new Product({
-          sellerId: req.body.sellerId,
-          pName: req.body.pName,
-          pDescription: req.body.pDescription,
-          price: req.body.price,
-          // prodImage: req.body.prodImage,
-          category: req.body.category,
-          brand: req.body.brand,
-          stock: req.body.stock,
+          sellerId: sellerId,
+          pName: pName,
+          pDescription: pDescription,
+          price: price,
+          // prodImage: myCloud.secure_url,
+          category: category,
+          brand: brand,
+          stock: stock,
         });
 
         prod
@@ -77,9 +88,9 @@ exports.singleproduct =
           });
       }
     } catch (error) {
-      console.log(`Error : ${error}`);
+      console.log(`Error : ${error.Message}`);
     }
-  });
+  };
 
 exports.productadded = async (req, res) => {
   console.log("Product Added Again");
