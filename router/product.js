@@ -11,7 +11,12 @@ const {
   prod_by_id,
   myproducts,
   allproducts,
+  createProductReview,
+  getProductReviews,
+  deleteReview,
 } = require("../controllers/productController");
+
+const { isAuthenticatedUser, authorizeRoles } = require("../middleware/auth");
 
 router.route("/product").post(singleproduct);
 router.route("/productadded").post(productadded);
@@ -22,7 +27,11 @@ router.route("/prodinfo").get(prodinfo);
 router.route("/prod_by_id").get(prod_by_id);
 router.route("/myproducts").get(myproducts);
 router.route("/allproducts").get(allproducts);
-
+router.route("/review").put(isAuthenticatedUser, createProductReview);
+router
+  .route("/reviews")
+  .get(getProductReviews)
+  .delete(isAuthenticatedUser, deleteReview);
 module.exports = router;
 
 // Product Schema added

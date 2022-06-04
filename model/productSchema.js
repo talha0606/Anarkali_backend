@@ -1,6 +1,6 @@
-const mongooose = require("mongoose");
+const mongoose = require("mongoose");
 
-const productSchema = new mongooose.Schema({
+const productSchema = new mongoose.Schema({
   sellerId: {
     type: String,
     // required: true,
@@ -32,6 +32,35 @@ const productSchema = new mongooose.Schema({
     type: String,
     required: true,
   },
+  ratings: {
+    type: Number,
+    default: 0,
+  },
+  numOfReviews: {
+    type: Number,
+    default: 0,
+  },
+  reviews: [
+    {
+      user: {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+        required: true,
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+      rating: {
+        type: Number,
+        required: true,
+      },
+      comment: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
   tokens: [
     {
       token: {
@@ -42,7 +71,7 @@ const productSchema = new mongooose.Schema({
   ],
 });
 
-const Product = mongooose.model("Product", productSchema);
+const Product = mongoose.model("Product", productSchema);
 
 module.exports = Product;
 
