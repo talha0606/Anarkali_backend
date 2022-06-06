@@ -4,7 +4,7 @@
 const express = require("express");
 const router = express.Router();
 const authenticate = require("../middleware/authenticate");
-const User = require("../model/userSchema");
+const Shop = require("../model/shopSchema");
 const Location = require("../model/locationSchema");
 
 require("../db/conn");
@@ -40,7 +40,7 @@ router.get("/homehome", (req, res) => {
 });
 
 router.post("/registered", async (req, res) => {
-  const updated = await User.updateOne(
+  const updated = await Shop.updateOne(
     { _id: req.body.id },
     { $set: { imageUrl: req.body.shopImage } }
   );
@@ -66,7 +66,7 @@ router.post(
     }
 
     console.log(`Register Shop Please ${req.body.email}`);
-    const userExist = await User.findOne({ email: email });
+    const userExist = await Shop.findOne({ email: email });
     // console.log("userExist: " + userExist.sName);
 
     // const userExist = null;
@@ -75,7 +75,7 @@ router.post(
       console.log("Email already Exist");
       return res.status(422).json({ error: "Email already Exist" });
     } else {
-      const user = new User({
+      const user = new Shop({
         sName: req.body.sName,
         sDescription: req.body.sDescription,
         address: req.body.address,
@@ -116,9 +116,9 @@ router.post("/signinin", async (req, res) => {
       return res.status(402).json({ error: "Plz Filled the data" });
     }
 
-    const userLogin = await User.findOne({ email: email });
+    const userLogin = await Shop.findOne({ email: email });
 
-    console.log("UserLogin: " + userLogin);
+    // console.log("UserLogin: " + userLogin);
 
     if (userLogin) {
       if (userLogin.password != password)
@@ -169,7 +169,7 @@ router.post("/home", async (req, res) => {
       }
     }
   }
-  const rootUser = await User.find(findArgs);
+  const rootUser = await Shop.find(findArgs);
   // console.log(rootUser);
   if (!rootUser) {
     throw new Error("Data not Found");
@@ -180,7 +180,8 @@ router.post("/home", async (req, res) => {
 
 router.get("/shopinfo", async (req, res) => {
   console.log("ShopInfo API");
-  const ShopData = await User.find({ _id: req.query.sellerid });
+  const ShopData = await Shop.find({ _id: req.query.sellerid });
+  console.log(`Shop Data: ${ShopData}`);
   res.send(ShopData);
 });
 
@@ -202,7 +203,7 @@ router.get("/searchShop", async (req, res) => {
   // db.inventory.find({ $or: [{ quantity: { $lt: 20 } }, { price: 10 }] });
   if (searchString.replace(/\s/g, "").length) {
     try {
-      const Shops = await User.find({
+      const Shops = await Shop.find({
         $or: [
           { sName: { $regex: searchString, $options: "i" } },
           { sDescription: { $regex: searchString, $options: "i" } },

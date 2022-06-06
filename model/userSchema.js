@@ -1,73 +1,64 @@
-const mongooose = require("mongoose");
+const mongoose = require("mongoose");
+const validator = require("validator");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const userSchema = new mongooose.Schema({
-  sName: {
+const userSchema = new mongoose.Schema({
+  name: {
     type: String,
-    required: true,
-  },
-  sDescription: {
-    type: String,
-    required: true,
-  },
-  address: {
-    type: String,
-    required: true,
+    required: [true, "Please Enter Your Name"],
+    maxLength: [30, "Name cannot exceed 30 characters"],
+    minLength: [4, "Name should have more than 4 characters"],
   },
   email: {
     type: String,
-    required: true,
+    required: [true, "Please Enter Your Name"],
+    unique: true,
+    validate: [validator.isEmail, "Please Enter a valid Email"],
   },
   password: {
     type: String,
-    required: true,
+    required: [true, "Please Enter Your Name"],
+    minLength: [8, "Password should be greater than 8 characters"],
+    select: false,
   },
-  // shopImage: {
-  //   type: String,
-  //   required: true,
-  // },
-  imageUrl: {
-    type: String,
-  },
-  category: {
-    type: String,
-    default: "Bags",
-  },
-  tokens: [
-    {
-      token: {
-        type: String,
-        required: true,
-      },
+  avatar: {
+    public_id: {
+      type: String,
+      required: true,
     },
-  ],
+    url: {
+      type: String,
+      required: true,
+    },
+  },
+  role: {
+    type: String,
+    default: "user",
+  },
+
+  resetPasswordToken: String,
+  resetPasswordExpire: Date,
 });
 
-// Middleware for Generating Tokens
-userSchema.methods.generateAuthToken = async function () {
-  try {
-    let token = jwt.sign({ _id: this._id.toString() }, process.env.SECRET_KEY);
-    this.tokens = this.tokens.concat({ token: token });
-    await this.save();
-    return token;
-  } catch (error) {
-    console.log(error);
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    next();
   }
+  this.password = await bcrypt.hash(this.password, 10);
+});
+
+// JWT TOKEN
+userSchema.methods.getJWTToken = function () {
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRE,
+  });
 };
 
-const User = mongooose.model("SHOP", userSchema);
+// Compare Password
+userSchema.methods.comparePassword = async function (password) {
+  return await bcrypt.compare(password, this.password);
+};
 
+const User = mongoose.model("Customer", userSchema);
 module.exports = User;
-
-// const jwt = require("jsonwebtoken");
-// const bcrypt = require("bcryptjs");
-// We are hashing the password
-// userSchema.pre("save", async function (next) {
-//   if (this.isModified("password")) {
-//     this.password = bcrypt.hash(this.password, 12);
-//     this.cpassword = bcrypt.hash(this.cpassword, 12);
-//   }
-//   next();
-// });
-
-// Create the collection Model
