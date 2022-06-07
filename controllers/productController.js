@@ -6,24 +6,27 @@ const ErrorHandler = require("../utils/errorhandler");
 // import Cloudinary and Multer files to store images in Cloudinary
 // const cloudinary = require("../utils/cloudinary");
 const cloudinary = require("cloudinary");
-
-const upload = require("../utils/multer");
+// const upload = require("../utils/multer");
 const ApiFeatures = require("../utils/apifeatures");
 
 exports.singleproduct =
-  // (upload.single("prodImage"),
+  // (upload.single("image"),
   async (req, res) => {
     try {
       console.log("\nProduct addition api");
-      // const myCloud = await cloudinary.uploader.upload(req.body.prodImage, {
-      //   folder: "products",
-      //   width: 150,
-      //   crop: "scale",
-      // });
+      // console.log("\nFile" + req.file);
+      // console.log("\nImage yr: " + req.body.image);
+      const myCloud = await cloudinary.v2.uploader.upload(req.body.image, {
+        folder: "products",
+        width: 150,
+        crop: "scale",
+      });
 
       console.log("id: " + req.body.sellerId);
       console.log("name: " + req.body.pName);
       console.log("desc: " + req.body.pDescription);
+      console.log("Url: " + myCloud.secure_url);
+
       // console.log("file: " + req.file);
 
       const {
@@ -68,7 +71,7 @@ exports.singleproduct =
           pName: pName,
           pDescription: pDescription,
           price: price,
-          // prodImage: myCloud.secure_url,
+          prodImage: myCloud.secure_url,
           category: category,
           brand: brand,
           stock: stock,
@@ -129,7 +132,7 @@ exports.searchProduct = async (req, res) => {
 };
 
 exports.updateProduct =
-  (upload.single("image"),
+  // (upload.single("image"),
   async (req, res) => {
     console.log("Update Product ApI: " + req.body.id);
     console.log("Path: " + req.file);
@@ -146,47 +149,52 @@ exports.updateProduct =
     } = req.body;
     // console.log("ABC: " + abc);
 
-    if (req.file === undefined) {
-      const updated = await Product.updateOne(
-        { _id: id },
-        {
-          $set: {
-            sellerId,
-            pName,
-            pDescription,
-            price,
-            prodImage,
-            category,
-            brand,
-            stock,
-          },
-        }
-      );
-      console.log("In If clause: After upadated api");
-      if (updated) res.status(200).json({ done: "upadated ho gai yrr" });
-    } else {
-      // console.log("AnbhbBC: " + abc);
-      const result = await cloudinary.uploader.upload(req.file.path);
-      console.log("Secure URL: " + result.secure_url);
-      const updated = await Product.updateOne(
-        { _id: req.body.id },
-        {
-          $set: {
-            sellerId,
-            pName,
-            pDescription,
-            price,
-            prodImage: result.secure_url,
-            category,
-            brand,
-            stock,
-          },
-        }
-      );
-      console.log("In Else Clause: After upadated api");
-      if (updated) res.status(200).json({ done: "upadated ho gai yrr" });
-    }
-  });
+    // if (req.file === undefined) {
+    //   const updated = await Product.updateOne(
+    //     { _id: id },
+    //     {
+    //       $set: {
+    //         sellerId,
+    //         pName,
+    //         pDescription,
+    //         price,
+    //         prodImage,
+    //         category,
+    //         brand,
+    //         stock,
+    //       },
+    //     }
+    //   );
+    //   console.log("In If clause: After upadated api");
+    //   if (updated) res.status(200).json({ done: "upadated ho gai yrr" });
+    // } else {
+    // console.log("AnbhbBC: " + abc);
+    const result = await cloudinary.v2.uploader.upload(req.body.image, {
+      folder: "products",
+      width: 150,
+      crop: "scale",
+    });
+
+    console.log("Secure URL: " + result.secure_url);
+    const updated = await Product.updateOne(
+      { _id: req.body.id },
+      {
+        $set: {
+          sellerId,
+          pName,
+          pDescription,
+          price,
+          prodImage: result.secure_url,
+          category,
+          brand,
+          stock,
+        },
+      }
+    );
+    console.log("In Else Clause: After upadated api");
+    if (updated) res.status(200).json({ done: "upadated ho gai yrr" });
+    // }
+  };
 
 exports.deleteproduct = async (req, res) => {
   try {
