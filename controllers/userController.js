@@ -11,18 +11,18 @@ exports.registerUser = /*catchAsyncErrors(*/ async (req, res, next) => {
   try {
     console.log("Register the user yrr");
     console.log("Avatar: " + req.body.image);
-    const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
-      folder: "products",
-      width: 150,
-      crop: "scale",
-    });
+    // const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
+    //   folder: "products",
+    //   width: 150,
+    //   crop: "scale",
+    // });
 
     const { name, email, password } = req.body;
 
     console.log("name: " + name);
     console.log("email: " + email);
     console.log("password: " + password);
-    console.log("Url: " + myCloud.secure_url);
+    // console.log("Url: " + myCloud.secure_url);
 
     const user = await User.create({
       name,
