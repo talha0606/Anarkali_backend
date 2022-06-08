@@ -7,36 +7,46 @@ const crypto = require("crypto");
 const cloudinary = require("cloudinary");
 
 // Register a User
-exports.registerUser = catchAsyncErrors(async (req, res, next) => {
-  console.log("Register the user yrr");
-  // const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
-  //   folder: "avatars",
-  //   width: 150,
-  //   crop: "scale",
-  // });
+exports.registerUser = /*catchAsyncErrors(*/ async (req, res, next) => {
+  try {
+    console.log("Register the user yrr");
+    console.log("Avatar: " + req.body.image);
+    const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
+      folder: "products",
+      width: 150,
+      crop: "scale",
+    });
 
-  const { name, email, password } = req.body;
+    const { name, email, password } = req.body;
 
-  const user = await User.create({
-    name,
-    email,
-    password,
-    avatar: {
-      // public_id: myCloud.public_id,
-      // url: myCloud.secure_url,
-      public_id: "this is public id",
-      url: "publicurlid",
-    },
-  });
+    console.log("name: " + name);
+    console.log("email: " + email);
+    console.log("password: " + password);
+    console.log("Url: " + myCloud.secure_url);
 
-  // const token = user.getJWTToken();
-  // res.status(201).json({
-  //   success: true,
-  //   // user,
-  //   token,
-  // });
-  sendToken(user, 201, res);
-});
+    const user = await User.create({
+      name,
+      email,
+      password,
+      avatar: {
+        // public_id: myCloud.public_id,
+        // url: myCloud.secure_url,
+        public_id: "this is public id",
+        url: "publicurlid",
+      },
+    });
+
+    // const token = user.getJWTToken();
+    // res.status(201).json({
+    //   success: true,
+    //   // user,
+    //   token,
+    // });
+    sendToken(user, 201, res);
+  } catch (error) {
+    console.log("Error: " + error.message);
+  }
+} /*)*/;
 
 // Login User
 exports.loginUser = catchAsyncErrors(async (req, res, next) => {
