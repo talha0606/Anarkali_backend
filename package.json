@@ -15,12 +15,8 @@
     "cloudinary": "^1.30.0",
     "cookie-parser": "^1.4.6",
     "dotenv": "^10.0.0",
-<<<<<<< HEAD
-    "express": "^4.17.3",
-=======
     "express": "^4.17.1",
     "express-fileupload": "^1.4.0",
->>>>>>> d431b608ebac13583530512ab3842fd2f18fbabb
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.13.7",
     "multer": "^1.4.4",
