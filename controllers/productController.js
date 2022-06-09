@@ -15,7 +15,7 @@ exports.singleproduct =
     try {
       console.log("\nProduct addition api");
       // console.log("\nFile" + req.file);
-      // console.log("\nImage yr: " + req.body.image);
+      console.log("\nImage yr: " + req.body.image);
       const myCloud = await cloudinary.v2.uploader.upload(req.body.image, {
         folder: "products",
         width: 150,
