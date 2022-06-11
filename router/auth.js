@@ -79,6 +79,7 @@ router.post(
         sName: req.body.sName,
         sDescription: req.body.sDescription,
         address: req.body.address,
+        phoneNo: req.body.phoneNo,
         email: req.body.email,
         password: req.body.password,
         imageUrl: req.body.imageUrl,

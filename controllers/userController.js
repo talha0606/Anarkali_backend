@@ -7,7 +7,7 @@ const crypto = require("crypto");
 const cloudinary = require("cloudinary");
 
 // Register a User
-exports.registerUser = catchAsyncErrors( async (req, res, next) => {
+exports.registerUser = catchAsyncErrors(async (req, res, next) => {
   try {
     console.log("Register the user yrr");
     console.log("Avatar: " + req.body.image);
@@ -46,7 +46,7 @@ exports.registerUser = catchAsyncErrors( async (req, res, next) => {
   } catch (error) {
     console.log("Error: " + error.message);
   }
-} /*)*/;
+});
 
 // Login User
 exports.loginUser = catchAsyncErrors(async (req, res, next) => {
