@@ -42,11 +42,12 @@ exports.registerUser = catchAsyncErrors( async (req, res, next) => {
     //   // user,
     //   token,
     // });
+    
     sendToken(user, 201, res);
   } catch (error) {
     console.log("Error: " + error.message);
   }
-} /*)*/;
+});
 
 // Login User
 exports.loginUser = catchAsyncErrors(async (req, res, next) => {

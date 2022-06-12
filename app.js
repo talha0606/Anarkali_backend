@@ -35,7 +35,7 @@ const userroute = require("./router/userRoute.js");
 // app.use(require("./router/product"));
 app.use("/product", productroute);
 app.use("/shop", authroute);
-app.use("/user", userroute);
+app.use("/customer", userroute);
 
 app.get("/", (req, res) => {
   res.send("home page");
