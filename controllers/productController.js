@@ -135,7 +135,9 @@ exports.updateProduct =
   // (upload.single("image"),
   async (req, res) => {
     console.log("Update Product ApI: " + req.body.id);
+    console.log("Update Product Category: " + req.body.category);
     console.log("Path: " + req.file);
+
     const {
       sellerId,
       id,
