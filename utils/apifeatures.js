@@ -18,33 +18,43 @@ class ApiFeatures {
     return this;
   }
 
-  brand() {
-    console.log("keyword" + this.queryStr.keyword);
-    const keyword = this.queryStr.keyword
-      ? {
-          pName: {
-            $regex: this.queryStr.keyword,
-            $options: "i",
-          },
-        }
-      : {};
-    this.query = this.query.find({ ...keyword });
-    return this;
-  }
+  // categorybrand() {
+  //   console.log("Api features: " + this.queryStr.categorybrand[0]);
+  //   let findArgs = {};
+
+  //   for (let key in this.queryStr.categorybrand) {
+  //     if (this.queryStr.categorybrand[key].length > 0) {
+  //       if (key === "brand") {
+  //         findArgs[key] = this.queryStr.categorybrand[key];
+  //         console.log("Api features: category: " + findArgs[key]);
+  //         // console.log(findArgs);
+  //       } else {
+  //         findArgs[key] = this.queryStr.categorybrand[key];
+  //         console.log("Api features: brand: " + findArgs[key]);
+  //         // console.log(findArgs);
+  //       }
+  //     }
+  //   }
+  //   console.log("Api features: " + findArgs);
+
+  //   this.query = this.query.find(findArgs);
+  //   return this;
+  // }
 
   filter() {
     const queryCopy = { ...this.queryStr };
 
-    // console.log("QueryString: " + queryCopy);
+    // console.log("api feature QueryString: " + queryCopy);
     //   Removing some fields for category
-    const removeFields = ["keyword", "page", "limit"];
+    const removeFields = ["keyword", "page", "limit", "categorybrand"];
 
     removeFields.forEach((key) => delete queryCopy[key]);
 
     // Filter For Price and Rating
 
     let queryStr = JSON.stringify(queryCopy);
-    console.log("QueryString: " + queryStr);
+    // console.log("................From Api Features.........");
+    // console.log("QueryString: " + queryStr);
 
     queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (key) => `$${key}`);
     console.log("QueryString: " + JSON.parse(queryStr));

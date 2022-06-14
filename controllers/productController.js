@@ -267,11 +267,13 @@ exports.myproducts = async (req, res) => {
 
 exports.allproducts = async (req, res) => {
   try {
+    console.log("Categories: " + req.query.categorybrand);
     const resultPerPage = 12;
     const productsCount = await Product.countDocuments();
 
     const apiFeature = new ApiFeatures(Product.find(), req.query)
       .search()
+      // .categorybrand()
       .filter();
 
     let myproducts = await apiFeature.query;
@@ -283,7 +285,7 @@ exports.allproducts = async (req, res) => {
     myproducts = await apiFeature.query;
 
     // const myproducts = await Product.find({});
-    console.log("Myproducts:" + myproducts);
+    // console.log("Myproducts:" + myproducts);
     res.status(200).json({
       success: true,
       myproducts,

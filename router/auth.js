@@ -154,7 +154,7 @@ router.get("/logout", (req, res) => {
 // For Shops..................................
 router.post("/home", async (req, res) => {
   console.log(`In Home API`);
-  // console.log("Price: ", req.body.price);
+  console.log("Filters: ", req.body.filters);
   let findArgs = {};
 
   for (let key in req.body.filters) {
@@ -162,14 +162,16 @@ router.post("/home", async (req, res) => {
       if (key === "brand") {
         findArgs[key] = req.body.filters[key];
         console.log(req.body.filters[key]);
-        console.log(findArgs);
+        // console.log(findArgs);
       } else {
         findArgs[key] = req.body.filters[key];
         console.log(req.body.filters[key]);
-        console.log(findArgs);
+        // console.log(findArgs);
       }
     }
   }
+  console.log("Auth.js: " + findArgs);
+
   const rootUser = await Shop.find(findArgs);
   // console.log(rootUser);
   if (!rootUser) {
