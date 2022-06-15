@@ -14,6 +14,7 @@ const {
   createProductReview,
   getProductReviews,
   deleteReview,
+  searchSpecificShopProducts,
 } = require("../controllers/productController");
 
 const { isAuthenticatedUser, authorizeRoles } = require("../middleware/auth");
@@ -32,6 +33,7 @@ router
   .route("/reviews")
   .get(getProductReviews)
   .delete(isAuthenticatedUser, deleteReview);
+router.route("/specificshopproducts").get(searchSpecificShopProducts);
 module.exports = router;
 
 // Product Schema added

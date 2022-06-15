@@ -426,3 +426,39 @@ exports.deleteReview = catchAsyncErrors(async (req, res, next) => {
     success: true,
   });
 });
+
+
+exports.searchSpecificShopProducts = async (req, res) => {
+  try{
+    console.log("Search Single Product API..." + req.query.name);
+  const searchString = req.query.name;
+  console.log("Search String length: " + searchString.length);
+
+  // const cities = await City.find({
+  //   city: { $regex: req.query.val, $options: "i" },
+  // }).limit(5);
+
+  // db.inventory.find({ $or: [{ quantity: { $lt: 20 } }, { price: 10 }] });
+  if (searchString.replace(/\s/g, "").length) {
+    try {
+      const Products = await Product.find({
+        $or: [
+          { pName: { $regex: searchString, $options: "i" } },
+          { pDescription: { $regex: searchString, $options: "i" } },
+        ]
+      }).limit(5);
+
+      console.log("Products: " + Products);
+      res.status(200).send(Products);
+    } catch (err) {
+      console.log("Error: " + err);
+    }
+  } else {
+    console.log("Else oye");
+    res.send("");
+  }
+
+  }catch(err){
+    Console.log("Error in Search single product: " + err.Message);
+  }
+}
