@@ -267,13 +267,13 @@ exports.myproducts = async (req, res) => {
 
 exports.allproducts = async (req, res) => {
   try {
-    console.log("Categories: " + req.query.categorybrand);
+    console.log("Categories: " + req.query.category);
     const resultPerPage = 12;
     const productsCount = await Product.countDocuments();
 
     const apiFeature = new ApiFeatures(Product.find(), req.query)
       .search()
-      // .categorybrand()
+      .category()
       .filter();
 
     let myproducts = await apiFeature.query;

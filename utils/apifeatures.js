@@ -5,7 +5,7 @@ class ApiFeatures {
   }
 
   search() {
-    console.log("keyword" + this.queryStr.keyword);
+    console.log("keyword: " + this.queryStr.keyword);
     const keyword = this.queryStr.keyword
       ? {
           pName: {
@@ -15,6 +15,20 @@ class ApiFeatures {
         }
       : {};
     this.query = this.query.find({ ...keyword });
+    return this;
+  }
+
+  category() {
+    console.log("Api Feature Category" + this.queryStr.category);
+    const category = this.queryStr.category
+      ? {
+          category: {
+            $regex: this.queryStr.category,
+            $options: "i",
+          },
+        }
+      : {};
+    this.query = this.query.find({ ...category });
     return this;
   }
 
@@ -46,7 +60,7 @@ class ApiFeatures {
 
     // console.log("api feature QueryString: " + queryCopy);
     //   Removing some fields for category
-    const removeFields = ["keyword", "page", "limit", "categorybrand"];
+    const removeFields = ["keyword", "page", "limit", "category"];
 
     removeFields.forEach((key) => delete queryCopy[key]);
 
