@@ -10,7 +10,7 @@ const cloudinary = require("cloudinary");
 exports.registerUser = catchAsyncErrors(async (req, res, next) => {
   try {
     console.log("Register the user yrr");
-    console.log("Avatar: " + req.body.image);
+    // console.log("Avatar: " + req.body.image);
     const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
       folder: "products",
       width: 150,
@@ -203,12 +203,13 @@ exports.updatePassword = catchAsyncErrors(async (req, res, next) => {
 
 // update User Profile
 exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
+  console.log("Update Profile API in User Controller.");
   const newUserData = {
     name: req.body.name,
     email: req.body.email,
   };
 
-  if (req.body.avatar !== "") {
+  if (req.body.avatar !== "undefined") {
     const user = await User.findById(req.user.id);
 
     const imageId = user.avatar.public_id;
