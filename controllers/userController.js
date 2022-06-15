@@ -202,12 +202,13 @@ exports.updatePassword = catchAsyncErrors(async (req, res, next) => {
 
 // update User Profile
 exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
+  console.log("Update Profile API in User Controller.");
   const newUserData = {
     name: req.body.name,
     email: req.body.email,
   };
 
-  if (req.body.avatar !== "") {
+  if (req.body.avatar !== "undefined") {
     const user = await User.findById(req.user.id);
 
     const imageId = user.avatar.public_id;
