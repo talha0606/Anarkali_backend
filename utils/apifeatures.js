@@ -18,6 +18,46 @@ class ApiFeatures {
     return this;
   }
 
+  searchbyid() {
+    console.log("id" + this.queryStr.id);
+    const id = this.queryStr.id
+      ? {
+          sellerId: this.queryStr.id,
+        }
+      : {};
+    this.query = this.query.find({ ...id });
+    return this;
+  }
+
+  specificShopProductSearch() {
+    console.log("Name" + this.queryStr.name);
+    const name = this.queryStr.name
+      ? {
+          $or: [
+            { pName: { $regex: this.queryStr.name, $options: "i" } },
+            { pDescription: { $regex: this.queryStr.name, $options: "i" } },
+          ],
+          sellerId: this.queryStr.id,
+        }
+      : {};
+    this.query = this.query.find({ ...name });
+    return this;
+  }
+
+  category() {
+    console.log("keyword" + this.queryStr.category);
+    const category = this.queryStr.category
+      ? {
+          category: {
+            $regex: this.queryStr.category,
+            $options: "i",
+          },
+        }
+      : {};
+    this.query = this.query.find({ ...category });
+    return this;
+  }
+
   // categorybrand() {
   //   console.log("Api features: " + this.queryStr.categorybrand[0]);
   //   let findArgs = {};
@@ -46,7 +86,7 @@ class ApiFeatures {
 
     // console.log("api feature QueryString: " + queryCopy);
     //   Removing some fields for category
-    const removeFields = ["keyword", "page", "limit", "categorybrand"];
+    const removeFields = ["keyword", "page", "limit", "category", "name", "id"];
 
     removeFields.forEach((key) => delete queryCopy[key]);
 
@@ -54,7 +94,7 @@ class ApiFeatures {
 
     let queryStr = JSON.stringify(queryCopy);
     // console.log("................From Api Features.........");
-    // console.log("QueryString: " + queryStr);
+    console.log("QueryString: " + queryStr);
 
     queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (key) => `$${key}`);
     console.log("QueryString: " + JSON.parse(queryStr));
