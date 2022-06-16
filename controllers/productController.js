@@ -27,7 +27,7 @@ exports.singleproduct =
       console.log("desc: " + req.body.pDescription);
       console.log("Url: " + myCloud.secure_url);
 
-      // console.log("file: " + req.file);
+      // console.\log("file: " + req.file);
 
       const {
         sellerId,
@@ -265,40 +265,6 @@ exports.myproducts = async (req, res) => {
   }
 };
 
-exports.allproducts = async (req, res) => {
-  try {
-    console.log("Categories: " + req.query.category);
-    const resultPerPage = 12;
-    const productsCount = await Product.countDocuments();
-
-    const apiFeature = new ApiFeatures(Product.find(), req.query)
-      .search()
-      .category()
-      .filter();
-
-    let myproducts = await apiFeature.query;
-
-    let filteredProductsCount = myproducts.length;
-
-    apiFeature.pagination(resultPerPage);
-
-    myproducts = await apiFeature.query;
-
-    // const myproducts = await Product.find({});
-    // console.log("Myproducts:" + myproducts);
-    res.status(200).json({
-      success: true,
-      myproducts,
-      productsCount,
-      resultPerPage,
-      filteredProductsCount,
-    });
-  } catch (err) {
-    console.log("error oye");
-    console.log(err);
-  }
-};
-
 // ---------------------------On the way---------------------
 // router.get("/myProducts", async (req, res) => {
 //   try {
@@ -427,38 +393,99 @@ exports.deleteReview = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
+exports.allproducts = async (req, res) => {
+  try {
+    console.log("Categories: " + req.query.categorybrand);
+    const resultPerPage = 12;
+    const productsCount = await Product.countDocuments();
+
+    const apiFeature = new ApiFeatures(Product.find(), req.query)
+      .search()
+      .category()
+      .filter();
+
+    let myproducts = await apiFeature.query;
+
+    let filteredProductsCount = myproducts.length;
+
+    apiFeature.pagination(resultPerPage);
+
+    myproducts = await apiFeature.query;
+
+    // const myproducts = await Product.find({});
+    // console.log("Myproducts:" + myproducts);
+    res.status(200).json({
+      success: true,
+      myproducts,
+      productsCount,
+      resultPerPage,
+      filteredProductsCount,
+    });
+  } catch (err) {
+    console.log("error oye");
+    console.log(err);
+  }
+};
 
 exports.searchSpecificShopProducts = async (req, res) => {
-  try{
-    console.log("Search Single Product API..." + req.query.name);
-  const searchString = req.query.name;
-  console.log("Search String length: " + searchString.length);
+  try {
+    console.log("Search Specific Shop Products: " + req.query.name);
+    const searchString = req.query.name;
+    console.log("Search String length: " + searchString.length);
 
-  // const cities = await City.find({
-  //   city: { $regex: req.query.val, $options: "i" },
-  // }).limit(5);
+    const apiFeature = new ApiFeatures(Product.find(), req.query)
+      .searchbyid()
+      .specificShopProductSearch()
+      .filter();
 
-  // db.inventory.find({ $or: [{ quantity: { $lt: 20 } }, { price: 10 }] });
-  if (searchString.replace(/\s/g, "").length) {
-    try {
-      const Products = await Product.find({
-        $or: [
-          { pName: { $regex: searchString, $options: "i" } },
-          { pDescription: { $regex: searchString, $options: "i" } },
-        ]
-      }).limit(5);
+    let myproducts = await apiFeature.query;
 
-      console.log("Products: " + Products);
-      res.status(200).send(Products);
-    } catch (err) {
-      console.log("Error: " + err);
-    }
-  } else {
-    console.log("Else oye");
-    res.send("");
-  }
+    // if (searchString.replace(/\s/g, "").length) {
+    //   try {
+    //     const Products = await Product.find({
+    //       $or: [
+    //         { pName: { $regex: searchString, $options: "i" } },
+    //         { pDescription: { $regex: searchString, $options: "i" } },
+    //       ],
+    //       sellerId: req.query.id,
+    //     });
 
-  }catch(err){
+    console.log("Products: " + myproducts);
+    res.status(200).json({ success: true, myproducts });
+    //   } catch (err) {
+    //     console.log("Error: " + err);
+    //   }
+    // } else {
+    //   console.log("Else oye");
+    //   res.send("");
+    // }
+  } catch (err) {
     Console.log("Error in Search single product: " + err.Message);
   }
-}
+};
+
+// exports.searchSpecificProductsPrice = async (req, res) => {
+//   try {
+//     const queryCopy = { ...req.query };
+
+//     const removeFields = ["id"];
+
+//     removeFields.forEach((key) => delete queryCopy[key]);
+
+//     // Filter For Price and Rating
+
+//     let queryStr = JSON.stringify(queryCopy);
+
+//     queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (key) => `$${key}`);
+//     console.log(
+//       "searchSpecificProductsPrice QueryString: " + JSON.parse(queryStr)
+//     );
+//     const queryString = JSON.parse(queryStr);
+
+//     const products = Product.find({ queryString, sellerId: req.query.id });
+
+//     res.status(200).send(products);
+//   } catch (error) {
+//     console.log("searchSpecificProductsPrice Error: " + error.message);
+//   }
+// };
