@@ -15,6 +15,7 @@ const {
   getProductReviews,
   deleteReview,
   searchSpecificShopProducts,
+  getProductDetails,
   searchSpecificProductsPrice,
 } = require("../controllers/productController");
 
@@ -30,6 +31,8 @@ router.route("/prod_by_id").get(prod_by_id);
 router.route("/myproducts").get(myproducts);
 router.route("/allproducts").get(allproducts);
 router.route("/review").put(isAuthenticatedUser, createProductReview);
+router.route("/product/:id").get(getProductDetails);
+
 router
   .route("/reviews")
   .get(getProductReviews)
