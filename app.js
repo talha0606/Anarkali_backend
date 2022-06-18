@@ -31,6 +31,7 @@ const authroute = require("./router/auth.js");
 const productroute = require("./router/product.js");
 const userroute = require("./router/userRoute.js");
 const orderroute = require("./router/orderRoute.js");
+const paymentroute = require("./router/paymentRoute");
 
 // app.use(require("./router/auth"));
 // app.use(require("./router/product"));
@@ -38,6 +39,7 @@ app.use("/product", productroute);
 app.use("/shop", authroute);
 app.use("/customer", userroute);
 app.use("/order", orderroute);
+app.use("/payment", paymentroute);
 
 app.get("/", (req, res) => {
   res.send("home page");
