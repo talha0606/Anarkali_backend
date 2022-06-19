@@ -9,32 +9,6 @@ const Location = require("../model/locationSchema");
 
 require("../db/conn");
 
-router.post("/storelocation", (req, res) => {
-  const { shopId, longitude, latitude } = req.body;
-  const location = new Location({ shopId, longitude, latitude });
-
-  location
-    .save()
-    .then((resu) => {
-      res.status(200).json({ id: "location registered Successfully" });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-});
-
-router.get("/getlocation", async (req, res) => {
-  console.log("Get Location");
-  try {
-    const locationed = await Location.find({ shopId: req.query.shopId });
-    if (locationed) {
-      res.status(200).send(locationed);
-    }
-  } catch (err) {
-    console.log("Location Error: " + err);
-  }
-});
-
 router.get("/homehome", (req, res) => {
   res.send(`Hello world from the server rotuer js shabash`);
 });
@@ -188,6 +162,13 @@ router.get("/shopinfo", async (req, res) => {
   res.send(ShopData);
 });
 
+router.get("/shop_by_id", async (req, res) => {
+  console.log("Shop-By-Id API");
+  const ShopData = await Shop.find({ _id: req.query.shopId });
+  console.log(`Shop Data: ${ShopData}`);
+  res.send(ShopData);
+});
+
 router.get("/sellerinfo", authenticate, async (req, res) => {
   console.log("ShopInfo API");
   const ShopData = await User.find({ _id: req.query.sellerid });
@@ -223,6 +204,32 @@ router.get("/searchShop", async (req, res) => {
     res.send("");
   }
 });
+
+// router.post("/storelocation", (req, res) => {
+//   const { shopId, longitude, latitude } = req.body;
+//   const location = new Location({ shopId, longitude, latitude });
+
+//   location
+//     .save()
+//     .then((resu) => {
+//       res.status(200).json({ id: "location registered Successfully" });
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     });
+// });
+
+// router.get("/getlocation", async (req, res) => {
+//   console.log("Get Location");
+//   try {
+//     const locationed = await Location.find({ shopId: req.query.shopId });
+//     if (locationed) {
+//       res.status(200).send(locationed);
+//     }
+//   } catch (err) {
+//     console.log("Location Error: " + err);
+//   }
+// });
 
 //.........................................................................................
 // const storage = multer.diskStorage({
