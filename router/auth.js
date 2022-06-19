@@ -128,7 +128,7 @@ router.post("/signinin", async (req, res) => {
         token = await userLogin.generateAuthToken();
         console.log(token);
 
-        res.cookie("jwtoken", token, {
+        res.cookie("Shoptoken", token, {
           expires: new Date(Date.now() + 25892000000),
           httpOnly: true,
         });
@@ -147,7 +147,7 @@ router.post("/signinin", async (req, res) => {
 // Logout  ka page
 router.get("/logout", (req, res) => {
   console.log(`Hello my Logout Page`);
-  res.clearCookie("jwtoken", { path: "/" });
+  res.clearCookie("Shoptoken", { path: "/" });
   res.status(200).send("User lOgout");
 });
 
