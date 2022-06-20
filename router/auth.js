@@ -109,6 +109,7 @@ router.post("/signinin", async (req, res) => {
         console.log(`idd : ${userLogin._id}`);
         console.log(`idd : ${typeof userLogin._id}`);
         res.status(202).json({ id: userLogin._id });
+        // res.status(200).json({ success: true, shop: userLogin });
       }
     } else {
       res.status(400).json({ error: "Invalid Credientials" });
@@ -156,7 +157,7 @@ router.post("/home", async (req, res) => {
 });
 
 router.get("/shopinfo", async (req, res) => {
-  console.log("ShopInfo API");
+  console.log("ShopInfo API: " + req.query.sellerid);
   const ShopData = await Shop.find({ _id: req.query.sellerid });
   console.log(`Shop Data: ${ShopData}`);
   res.send(ShopData);
